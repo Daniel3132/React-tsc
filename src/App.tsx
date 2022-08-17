@@ -1,24 +1,49 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import Form from './components/Form';
+import List from './components/List';
+import {Sub} from './types' 
+
+
+interface AppState {
+  subs: Array<Sub>
+  newSubsNumber:number
+}
+
+const initial_state = [
+  {
+    nick: "dapelu",
+    subMonths: 9,
+    avatar: 'xd',
+    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio aperiam id officiis. Iste asperiores quaerat voluptates quis quas nam, tempore vel enim omnis",
+  },
+  {
+    nick: "dapelu",
+    subMonths: 8,
+    avatar: 'xd',
+
+  }
+]
+
 
 function App() {
+  const [subs, setSubs] = useState<AppState["subs"]>([])
+  const [newsubs, setNewSubs] = useState<AppState["newSubsNumber"]>(0)
+
+
+  useEffect(() => {
+    setSubs(initial_state)
+  }, [])
+
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>React with Typescript</h1>
+      <ul>
+        <List subs={subs} />
+        <Form />
+      </ul>
     </div>
   );
 }
