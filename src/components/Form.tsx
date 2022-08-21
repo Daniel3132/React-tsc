@@ -1,50 +1,60 @@
-import { useState } from "react"
+import React from "react"
+import useNewSubForm from "../hooks/useNewSubForm"
 import { Sub } from '../types'
 
-interface FormState {
-    /* nick: '',
-    subMonths: 0,
-    avatar: '',
-    description: '' */
-    inputValues: Sub
+
+
+interface FormProps {
+    onNewSub: (newSub: Sub) => void
 }
 
-const Form = () => {
-    const [inputValues, setInputValues] = useState<FormState["inputValues"]>({
-        nick: '',
-        subMonths: 0,
-        avatar: '',
-        description: ''
-    })
+const INITIAL_STATE = {
+    nick: '',
+    subMonths: 0,
+    avatar: '',
+    description: ''
+}
 
-    const handleSubmit = () => {
 
+
+
+
+const Form = ({ onNewSub }: FormProps) => {
+    // const [inputValues, setInputValues] = useState<FormState["inputValues"]>(INITIAL_STATE)
+
+    const [inputValues, dispatch] = useNewSubForm()
+
+    const handleSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
+        evt.preventDefault()
+        onNewSub(inputValues)
+        dispatch({type:"clear"})
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setInputValues({
-            ...inputValues,
-            [e.target.name]: e.target.value
+        const { name, value } = e.target
+
+        dispatch({
+            type: "change_value",
+            payload: {
+                inputName: name,
+                inputValue: value
+            }
         })
+    }
+
+    const handleClear = () => {
+        dispatch({ type: "clear" })
     }
 
     return (
         <div>
             <form onSubmit={handleSubmit}>
-                {/*
-                //De esta manera podemos detectar el tipo de evento que estando 
-                en la funcion, no lo reconocia y no podiamos saber el nombre
-                 <input onChange={e=>{
-                    setInputValues({
-                        ...inputValues,
-                        [e.target.name]:e.target.value
-                    })
-                }} type="text" /> */}
                 <input onChange={handleChange} value={inputValues.nick} type="text" name="nick" placeholder="nick" />
                 <input onChange={handleChange} value={inputValues.subMonths} type="text" name="subMonth" placeholder="subMonth" />
-                <textarea onChange={handleChange} value={inputValues.avatar} name="description" placeholder="description" />
-                <input onChange={handleChange} value={inputValues.description} type="text" name="avatar" placeholder="avatar" />
-                <button>Save new Sub!</button>
+                <textarea onChange={handleChange} value={inputValues.description} name="description" placeholder="description" />
+                <input onChange={handleChange} value={inputValues.avatar} type="text" name="avatar" placeholder="avatar" />
+                <button onClick={handleClear} type="button">Clear Form</button>
+                <button type="submit">Save new Sub!</button>
             </form>
         </div>
     )
